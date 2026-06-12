@@ -64,28 +64,28 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           ListTile(
-            leading: const Icon(Icons.download),
             title: const Text("Receiving"),
             subtitle: const Text("Receive by ASN / PO"),
             onTap: () => openMenu( context,  "Receiving"),
+            trailing: const Icon(Icons.arrow_forward_ios),
           ),
           ListTile(
-            leading: const Icon(Icons.move_down),
             title: const Text("Putaway"),
             subtitle: const Text("Move stock to storage location"),
             onTap: () => openMenu(context,"Putaway"),
+            trailing: const Icon(Icons.arrow_forward_ios),
           ),
           ListTile(
-            leading: const Icon(Icons.search),
             title: const Text("Inventory Lookup"),
             subtitle: const Text("Search item, LPN or location"),
             onTap: () => openMenu(context,"Inventory Lookup"),
+            trailing: const Icon(Icons.arrow_forward_ios),
           ),
           ListTile(
-            leading: const Icon(Icons.task_alt),
             title: const Text("My Tasks"),
             subtitle: const Text("Assigned warehouse tasks"),
             onTap: () => openMenu(context,"My Tasks"),
+            trailing: const Icon(Icons.arrow_forward_ios),
           ),
         ],
       ),

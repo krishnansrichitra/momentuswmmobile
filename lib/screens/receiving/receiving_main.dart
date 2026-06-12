@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app_config.dart';
+import 'receiving_apis.dart';
 
 class ReceivingPage extends StatefulWidget {
   const ReceivingPage({super.key});
@@ -87,8 +88,10 @@ class _ReceivingPageState extends State<ReceivingPage> {
             child: ListTile(
               title: Text(option),
               trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
+              onTap: () async {
                 print("Selected: $option");
+                List<String> result =
+                    await ReceivingApiService.getInitScreen(option);
               },
             ),
           );

@@ -4,7 +4,7 @@ class AppConfig {
 
   static String get apiBaseUrl {
     if (isLocal) {
-      return "http://10.44.0.74:9150";
+      return "http://10.20.74.160:9150";
     }
 
     return "https://momentusone.com/wms";
