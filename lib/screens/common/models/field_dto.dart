@@ -1,5 +1,5 @@
 class FieldDto {
-  final int sequence;
+  final int? sequence;
   final String? label;
   final String? type;
   final String? accessor;
@@ -48,7 +48,11 @@ class ScreenDto {
   factory ScreenDto.fromJson(Map<String, dynamic> json) {
      return  ScreenDto (
          fields: (json['fields'] as List).map((e) => FieldDto.fromJson(e)).toList(),
-         buttons: (json['buttons'] as List).map((e) => ButtonDto.fromJson(e)).toList(),
+         buttons: json['buttons'] == null
+             ? []
+             : (json['buttons'] as List)
+             .map((e) => ButtonDto.fromJson(e))
+             .toList(),
      );
   }
 

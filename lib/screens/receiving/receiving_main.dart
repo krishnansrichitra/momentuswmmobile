@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app_config.dart';
 import 'receiving_apis.dart';
+import 'models/receiving_screen_dto.dart';
 
 class ReceivingPage extends StatefulWidget {
   const ReceivingPage({super.key});
@@ -90,8 +91,9 @@ class _ReceivingPageState extends State<ReceivingPage> {
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () async {
                 print("Selected: $option");
-                List<String> result =
+                ReceivingScreenDto result =
                     await ReceivingApiService.getInitScreen(option);
+                print(result);
               },
             ),
           );

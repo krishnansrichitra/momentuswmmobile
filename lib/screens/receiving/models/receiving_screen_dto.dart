@@ -9,7 +9,8 @@ class ReceivingScreenDto {
 
   factory ReceivingScreenDto.fromJson(Map<String, dynamic> json) {
     return  ReceivingScreenDto(
-        mobileScreenDTO: json['mobileScreenDTO'],
+        mobileScreenDTO: ScreenDto.fromJson(
+            json['mobileScreenDTO']),
         screenNo: json['screenNo'],
       template: json['template']
     );

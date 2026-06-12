@@ -2,17 +2,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../app_config.dart';
+import 'models/receiving_screen_dto.dart';
 
 class ReceivingApiService {
-  static Future<List<String>> getInitScreen(String selectedOption) async {
+  static Future<ReceivingScreenDto> getInitScreen(String selectedOption) async {
     final prefs = await SharedPreferences.getInstance();
     final jwt = prefs.getString("jwt");
 
     final uri = Uri.parse(
-        "${AppConfig.apiBaseUrl}/wms/rcvcontroller/templateScreen"
+        "${AppConfig.apiBaseUrl}/wms/api/rcvcontroller/templateScreen"
     ).replace(
       queryParameters: {
-        "option": selectedOption,
+        "template": selectedOption,
       },
     );
 
@@ -25,7 +26,7 @@ class ReceivingApiService {
     );
 
     if (response.statusCode == 200) {
-      return List<String>.from(jsonDecode(response.body));
+      return ReceivingScreenDto.fromJson(jsonDecode(response.body));
     }
 
     throw Exception("Failed to load data");
