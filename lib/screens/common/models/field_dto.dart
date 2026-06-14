@@ -2,7 +2,7 @@ class FieldDto {
   final int? sequence;
   final String? label;
   final String? type;
-  final String? accessor;
+  final String accessor;
   final String? populator;
   final String? value;
   final bool? mandatory;

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../app_config.dart';
 import 'receiving_apis.dart';
 import 'models/receiving_screen_dto.dart';
+import 'controller/receiving_controller.dart';
 
 class ReceivingPage extends StatefulWidget {
   const ReceivingPage({super.key});
@@ -94,6 +95,14 @@ class _ReceivingPageState extends State<ReceivingPage> {
                 ReceivingScreenDto result =
                     await ReceivingApiService.getInitScreen(option);
                 print(result);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ReceivingScreen(
+                      screenDto: result.mobileScreenDTO,
+                    ),
+                  ),
+                );
               },
             ),
           );
