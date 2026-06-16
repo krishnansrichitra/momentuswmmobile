@@ -101,6 +101,7 @@ class _ReceivingPageState extends State<ReceivingPage> {
                     builder: (context) => ReceivingScreen(
                       screenDto: result.mobileScreenDTO,
                       screenNo: result.screenNo,
+                      template: result.template,
                     ),
                   ),
                 );

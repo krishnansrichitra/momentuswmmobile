@@ -2,7 +2,7 @@ import '../../common/models/field_dto.dart';
 
 class ReceivingScreenDto {
   final ScreenDto mobileScreenDTO;
-  final String screenNo;
+  final int screenNo;
   String template;
 
   ReceivingScreenDto( {required this.mobileScreenDTO, required this.screenNo,required this.template });

@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 import '../../common/models/field_dto.dart';
 import '../../common/builders/widget_builder.dart';
 import '../receiving_main.dart';
+import '../../../app_config.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import '../models/receiving_screen_dto.dart';
+
+
+
 
 class ReceivingScreen extends StatefulWidget {
   final ScreenDto screenDto;
-  final String screenNo;
+  final int screenNo;
+  final String template;
 
   const ReceivingScreen({
     super.key,
     required this.screenDto,
     required this.screenNo,
+    required this.template,
   });
 
   @override
@@ -20,14 +30,53 @@ class ReceivingScreen extends StatefulWidget {
 class _ReceivingScreenState extends State<ReceivingScreen> {
   final Map<String, TextEditingController> controllers = {};
 
+  Future<void> loadNextScreen(Map<String, dynamic> request) async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("jwt");
+    final uri = Uri.parse(
+        "${AppConfig.apiBaseUrl}/wms/api/rcvcontroller/submitreceiving"
+    ).replace(
+      queryParameters: {
+        "template": widget.template,
+        "screenNo":widget.screenNo.toString(),
+        "action":"next"
+      },
+    );
+    final response = await http.post(
+      uri,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(request)
+    );
+
+    if (response.statusCode == 200) {
+       ReceivingScreenDto result =ReceivingScreenDto.fromJson(jsonDecode(response.body));
+       print (result);
+       Navigator.push(
+         context,
+         MaterialPageRoute(
+           builder: (context) => ReceivingScreen(
+             screenDto: result.mobileScreenDTO,
+             screenNo: result.screenNo,
+             template: result.template,
+           ),
+         ),
+       );
+    }
+
+  }
+
   void submit() {
     Map<String, dynamic> request = {};
 
     for (var field in widget.screenDto.fields ?? []) {
       request[field.accessor] = controllers[field.accessor]?.text;
     }
-    request['screenNo'] = widget.screenNo;
     print(request);
+    loadNextScreen(request);
   }
 
   void previous() {
