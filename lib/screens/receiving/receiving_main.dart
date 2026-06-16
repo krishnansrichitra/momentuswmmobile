@@ -94,12 +94,13 @@ class _ReceivingPageState extends State<ReceivingPage> {
                 print("Selected: $option");
                 ReceivingScreenDto result =
                     await ReceivingApiService.getInitScreen(option);
-                print(result);
+                print(result.screenNo);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ReceivingScreen(
                       screenDto: result.mobileScreenDTO,
+                      screenNo: result.screenNo,
                     ),
                   ),
                 );
