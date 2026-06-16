@@ -68,6 +68,19 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     }
   }
 
+  void complete()
+  {
+    Map<String, dynamic> request = {};
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    for (var field in widget.screenDto.fields ?? []) {
+      request[field.accessor] = controllers[field.accessor]?.text;
+    }
+    print(request);
+  }
+
   void submit() {
     Map<String, dynamic> request = {};
     if (!_formKey.currentState!.validate()) {
@@ -111,7 +124,17 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                       child: const Text("Previous"),
                     ),
                   const SizedBox(width: 20),
-                  ElevatedButton(onPressed: submit, child: const Text("Next")),
+                  if (widget.screenNo == 4)
+                    ElevatedButton(
+                      onPressed: complete,
+                      child: const Text("Complete"),
+                    )
+                  else
+                    ElevatedButton(
+                      onPressed: submit,
+                      child: const Text("Proceed"),
+                    ),
+
                 ],
               ),
             ],
