@@ -1,31 +1,92 @@
 import '../models/field_dto.dart';
 import 'package:flutter/material.dart';
+import 'scanner_screen.dart';
 
+Future<String?> openScanner(BuildContext context) async {
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const ScannerScreen(),
+    ),
+  );
+
+  return result;
+}
 
   Widget buildField(  BuildContext context,
       FieldDto field,
-      Map<String, TextEditingController> controllers) {
+      Map<String, dynamic> controllers) {
     if (field.type == "data_type_str") {
       controllers.putIfAbsent(
         field.accessor,
             () => TextEditingController(),
       );
 
-      return TextFormField(
-        controller: controllers[field.accessor],
-        decoration: InputDecoration(
-          labelText: field.mandatory ?? false
-              ? "${field.label} *"
-              : field.label,
-        ),
-        validator: (value) {
-          if ((field.mandatory ?? false) &&
-              (value == null || value.trim().isEmpty)) {
-            return "${field.label} is required";
-          }
-          return null;
-        },
-      );
+      if (field.populator != null && field.populator != ''){
+        String? selectedValue ;
+        final List<Map<String, String>> options = [
+          {
+            "code": "PLT",
+            "description": "Pallet",
+          },
+          {
+            "code": "CSE",
+            "description": "Case",
+          },
+        ];
+        return DropdownButtonFormField<String>(
+          initialValue: selectedValue,
+          decoration: const InputDecoration(
+            labelText: "Select Value",
+            border: OutlineInputBorder(),
+          ),
+          items: options.map((item) {
+            return DropdownMenuItem<String>(
+              value: item["code"],
+              child: Text(item["description"]!),
+            );
+          }).toList(),
+          onChanged: (value) {
+              selectedValue = value;
+          },
+        );
+      }
+
+      if (field.scannable == true ) {
+        return TextFormField(
+          controller: controllers[field.accessor],
+          decoration: InputDecoration(
+            labelText: field.label,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.qr_code_scanner),
+              onPressed: () async {
+                final scannedValue = await openScanner(context);
+                if (scannedValue != null) {
+                  controllers[field.accessor]!.text = scannedValue;
+                }
+              },
+            ),
+          ),
+        );
+      }else {
+        return TextFormField(
+          controller: controllers[field.accessor],
+          decoration: InputDecoration(
+            labelText: field.mandatory ?? false
+                ? "${field.label} *"
+                : field.label,
+          ),
+          validator: (value) {
+            if ((field.mandatory ?? false) &&
+                (value == null || value
+                    .trim()
+                    .isEmpty)) {
+              return "${field.label} is required";
+            }
+            return null;
+          },
+        );
+      }
     }
 
     if (field.type == "data_type_long") {

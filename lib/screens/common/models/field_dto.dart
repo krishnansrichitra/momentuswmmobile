@@ -6,9 +6,10 @@ class FieldDto {
   final String? populator;
   final String? value;
   final bool? mandatory;
+  final bool? scannable;
 
   FieldDto( {required this.sequence,required this.label, required this.type,  required this.accessor, required this.populator,
-    required this.value,  required this.mandatory});
+    required this.value,  required this.mandatory,required this.scannable});
 
   factory FieldDto.fromJson(Map<String, dynamic> json) {
     return FieldDto(
@@ -18,7 +19,8 @@ class FieldDto {
     accessor : json['accessor'],
     populator : json['populator'],
     value : json['value'],
-    mandatory : json['mandatory']
+    mandatory : json['mandatory'],
+    scannable:json['scannable']
     );
   }
 

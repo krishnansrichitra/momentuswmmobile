@@ -12,12 +12,14 @@ class ReceivingScreen extends StatefulWidget {
   final ScreenDto screenDto;
   final int screenNo;
   final String template;
+  final int? receivingId;
 
   const ReceivingScreen({
     super.key,
     required this.screenDto,
     required this.screenNo,
     required this.template,
+    required this.receivingId
   });
 
   @override
@@ -26,11 +28,13 @@ class ReceivingScreen extends StatefulWidget {
 
 class _ReceivingScreenState extends State<ReceivingScreen> {
   final Map<String, TextEditingController> controllers = {};
+  final Map<String, dynamic> formValues = {};
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> loadNextScreen(Map<String, dynamic> request) async {
+  Future<void> loadNextScreen(Map<String, dynamic> request,String action) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("jwt");
+    request['receivingId'] = widget.receivingId;
     final uri =
         Uri.parse(
           "${AppConfig.apiBaseUrl}/wms/api/rcvcontroller/submitreceiving",
@@ -38,7 +42,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
           queryParameters: {
             "template": widget.template,
             "screenNo": widget.screenNo.toString(),
-            "action": "next",
+            "action": action,
           },
         );
     final response = await http.post(
@@ -62,6 +66,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
             screenDto: result.mobileScreenDTO,
             screenNo: result.screenNo,
             template: result.template,
+            receivingId: result.receivingId,
           ),
         ),
       );
@@ -81,7 +86,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     print(request);
   }
 
-  void submit() {
+  void submit(String action) {
     Map<String, dynamic> request = {};
     if (!_formKey.currentState!.validate()) {
       return;
@@ -91,7 +96,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
       request[field.accessor] = controllers[field.accessor]?.text;
     }
     print(request);
-    loadNextScreen(request);
+    loadNextScreen(request,action);
   }
 
   void previous() {
@@ -99,6 +104,37 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
       context,
       MaterialPageRoute(builder: (context) => const ReceivingPage()),
     );
+  }
+
+  void scanLPN ()
+  {
+    submit('scanLPN');
+  }
+
+  void scanChildLPN ()
+  {
+    submit('scanChildLPN');
+  }
+
+  void scanItem ()
+  {
+    submit('scanItem');
+  }
+
+  void generateLPN()
+  {
+
+    submit('generateLPNNo');
+  }
+
+  void completeScan()
+  {
+    submit('completeScan');
+  }
+
+  void completeReceiving()
+  {
+    submit('completeReceiving');
   }
 
   @override
@@ -118,20 +154,53 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  if (widget.screenNo == 1)
+                  if (widget.screenNo == 1)...[
                     ElevatedButton(
-                      onPressed: previous,
-                      child: const Text("Previous"),
+                      onPressed: scanLPN,
+                      child: const Text("Scan LPN"),
                     ),
                   const SizedBox(width: 20),
-                  if (widget.screenNo == 4)
-                    ElevatedButton(
-                      onPressed: complete,
-                      child: const Text("Complete"),
+                 ]else if (widget.screenNo == 2)...[
+                    Wrap(
+                      spacing: 20,
+                      runSpacing: 20,
+                      children: [
+                        ElevatedButton(
+                          onPressed: scanItem,
+                          child: const Text("Scan Item"),
+                        ),
+                        ElevatedButton(
+                          onPressed: scanChildLPN,
+                          child: const Text("Scan Child LPN"),
+                        ),
+                        ElevatedButton(
+                          onPressed: generateLPN,
+                          child: const Text("Generate LPN No"),
+                        ),
+                      ],
                     )
-                  else
+                  ]else if (widget.screenNo == 3)...[
+                    Wrap(
+                      spacing: 20,
+                      runSpacing: 20,
+                      children: [
+                        ElevatedButton(
+                          onPressed: scanItem,
+                          child: const Text("Scan  Next Item"),
+                        ),
+                        ElevatedButton(
+                          onPressed: scanLPN,
+                          child: const Text("Scan Next LPN"),
+                        ),
+                        ElevatedButton(
+                          onPressed: completeScan,
+                          child: const Text("Generate LPN No"),
+                        ),
+                      ],
+                    )
+                  ]else
                     ElevatedButton(
-                      onPressed: submit,
+                      onPressed: completeReceiving,
                       child: const Text("Proceed"),
                     ),
 

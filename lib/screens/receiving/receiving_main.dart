@@ -102,6 +102,7 @@ class _ReceivingPageState extends State<ReceivingPage> {
                       screenDto: result.mobileScreenDTO,
                       screenNo: result.screenNo,
                       template: result.template,
+                      receivingId: result.receivingId,
                     ),
                   ),
                 );
