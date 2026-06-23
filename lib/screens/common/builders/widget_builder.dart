@@ -15,13 +15,9 @@ Future<String?> openScanner(BuildContext context) async {
 
   Widget buildField(  BuildContext context,
       FieldDto field,
-      Map<String, dynamic> controllers) {
+      Map<String, dynamic> controllers,
+      Map<String, dynamic> formValues) {
     if (field.type == "data_type_str") {
-      controllers.putIfAbsent(
-        field.accessor,
-            () => TextEditingController(),
-      );
-
       if (field.populator != null && field.populator != ''){
         String? selectedValue ;
         final List<Map<String, String>> options = [
@@ -36,9 +32,13 @@ Future<String?> openScanner(BuildContext context) async {
         ];
         return DropdownButtonFormField<String>(
           initialValue: selectedValue,
-          decoration: const InputDecoration(
-            labelText: "Select Value",
-            border: OutlineInputBorder(),
+          onChanged: (value) {
+            formValues[field.accessor] = value;
+          },
+          decoration: InputDecoration(
+            labelText: field.mandatory ?? false
+                ? "${field.label} *"
+                : field.label,
           ),
           items: options.map((item) {
             return DropdownMenuItem<String>(
@@ -46,12 +46,12 @@ Future<String?> openScanner(BuildContext context) async {
               child: Text(item["description"]!),
             );
           }).toList(),
-          onChanged: (value) {
-              selectedValue = value;
-          },
         );
       }
-
+      controllers.putIfAbsent(
+        field.accessor,
+            () => TextEditingController(),
+      );
       if (field.scannable == true ) {
         return TextFormField(
           controller: controllers[field.accessor],

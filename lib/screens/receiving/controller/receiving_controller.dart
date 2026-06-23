@@ -81,7 +81,9 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     }
 
     for (var field in widget.screenDto.fields ?? []) {
-      request[field.accessor] = controllers[field.accessor]?.text;
+      request[field.accessor] =
+          controllers[field.accessor]?.text ??
+              formValues[field.accessor];
     }
     print(request);
   }
@@ -93,7 +95,9 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     }
 
     for (var field in widget.screenDto.fields ?? []) {
-      request[field.accessor] = controllers[field.accessor]?.text;
+      request[field.accessor] =
+          controllers[field.accessor]?.text ??
+              formValues[field.accessor];
     }
     print(request);
     loadNextScreen(request,action);
@@ -148,7 +152,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
           child: Column(
             children: [
               ...(widget.screenDto.fields ?? []).map(
-                (field) => buildField(context,field, controllers),
+                (field) => buildField(context,field, controllers,formValues),
               ),
 
               const SizedBox(height: 20),
