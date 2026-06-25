@@ -141,6 +141,13 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     submit('completeReceiving');
   }
 
+  Future<void> scanCompleted(
+      FieldDto field,
+      String value) async {
+    print("Scanned: $value");
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,7 +159,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
           child: Column(
             children: [
               ...(widget.screenDto.fields ?? []).map(
-                (field) => buildField(context,field, controllers,formValues),
+                (field) => buildField(context,field, controllers,formValues,scanCompleted),
               ),
 
               const SizedBox(height: 20),
