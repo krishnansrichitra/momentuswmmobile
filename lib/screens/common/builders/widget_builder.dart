@@ -1,6 +1,12 @@
 import '../models/field_dto.dart';
 import 'package:flutter/material.dart';
 import 'scanner_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../../app_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 Future<String?> openScanner(BuildContext context) async {
   final result = await Navigator.push(
@@ -13,41 +19,71 @@ Future<String?> openScanner(BuildContext context) async {
   return result;
 }
 
-  Widget buildField(  BuildContext context,
+
+Future<List<Map<String, String>>> loadOptions(String popu) async  {
+
+  final prefs = await SharedPreferences.getInstance();
+  final jwt = prefs.getString("jwt");
+  final uri = Uri.parse("${AppConfig.apiBaseUrl}/wms/api/mobile/dropdown?populator=" + popu );
+  final response = await http.get(
+    uri,
+    headers: {
+      "Authorization": "Bearer $jwt",
+      "Content-Type": "application/json",
+    },
+  );
+
+
+  if (response.statusCode == 200) {
+    final List<dynamic> jsonList = jsonDecode(response.body);
+
+    return jsonList.map((e) {
+      return {
+        "code": e["code"].toString(),
+        "description": e["description"].toString(),
+      };
+    }).toList();
+  }
+
+  throw Exception("Failed to load dropdown options");
+}
+
+
+Widget buildField(  BuildContext context,
       FieldDto field,
       Map<String, dynamic> controllers,
-      Map<String, dynamic> formValues) {
-    if (field.type == "data_type_str") {
+      Map<String, dynamic> formValues)  {
+    if (field.type == "data_type_str")  {
+      String? selectedValue;
       if (field.populator != null && field.populator != ''){
-        String? selectedValue ;
-        final List<Map<String, String>> options = [
-          {
-            "code": "PLT",
-            "description": "Pallet",
-          },
-          {
-            "code": "CSE",
-            "description": "Case",
-          },
-        ];
-        return DropdownButtonFormField<String>(
-          initialValue: selectedValue,
-          onChanged: (value) {
-            formValues[field.accessor] = value;
-          },
-          decoration: InputDecoration(
-            labelText: field.mandatory ?? false
-                ? "${field.label} *"
-                : field.label,
-          ),
-          items: options.map((item) {
-            return DropdownMenuItem<String>(
-              value: item["code"],
-              child: Text(item["description"]!),
+        return FutureBuilder<List<Map<String, String>>>(
+          future: loadOptions(field.populator!),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const CircularProgressIndicator();
+            }
+            final options = snapshot.data!;
+            return DropdownButtonFormField<String>(
+              initialValue: selectedValue,
+              onChanged: (value) {
+                formValues[field.accessor] = value;
+              },
+              decoration: InputDecoration(
+                labelText: field.mandatory ?? false
+                    ? "${field.label} *"
+                    : field.label,
+              ),
+              items: options.map((item) {
+                return DropdownMenuItem<String>(
+                  value: item["code"],
+                  child: Text(item["description"]!),
+                );
+              }).toList(),
             );
-          }).toList(),
-        );
+          }
+            );
       }
+
       controllers.putIfAbsent(
         field.accessor,
             () => TextEditingController(),
