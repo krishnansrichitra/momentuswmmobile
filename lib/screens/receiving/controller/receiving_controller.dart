@@ -13,13 +13,17 @@ class ReceivingScreen extends StatefulWidget {
   final int screenNo;
   final String template;
   final int? receivingId;
+  final bool? scanSuccess;
+  final String? errorMessage;
 
   const ReceivingScreen({
     super.key,
     required this.screenDto,
     required this.screenNo,
     required this.template,
-    required this.receivingId
+    required this.receivingId,
+    required this.scanSuccess,
+    required this.errorMessage
   });
 
   @override
@@ -67,9 +71,60 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
             screenNo: result.screenNo,
             template: result.template,
             receivingId: result.receivingId,
+            scanSuccess: result.scanSuccess,
+            errorMessage: result.errorMessage,
           ),
         ),
       );
+    }
+  }
+
+  Future<void> scanAndPush(Map<String, dynamic> request,String action,String accessor,String barcode) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("jwt");
+    request['receivingId'] = widget.receivingId;
+    final uri =
+    Uri.parse(
+      "${AppConfig.apiBaseUrl}/wms/api/rcvcontroller/scanBarcode",
+    ).replace(
+      queryParameters: {
+        "template": widget.template,
+        "screenNo": widget.screenNo.toString(),
+        "action": action,
+        "accessor":accessor,
+        "barcode" :barcode
+      },
+    );
+    final response = await http.post(
+      uri,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(request),
+    );
+
+    if (response.statusCode == 200) {
+      ReceivingScreenDto result = ReceivingScreenDto.fromJson(
+        jsonDecode(response.body),
+      );
+      print(result);
+      if (result.scanSuccess == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ReceivingScreen(
+                  screenDto: result.mobileScreenDTO,
+                  screenNo: result.screenNo,
+                  template: result.template,
+                  receivingId: result.receivingId,
+                  scanSuccess: result.scanSuccess,
+                  errorMessage: result.errorMessage,
+                ),
+          ),
+        );
+      }
     }
   }
 
@@ -86,6 +141,16 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
               formValues[field.accessor];
     }
     print(request);
+  }
+
+
+  Future<void> scanCompleted(
+      FieldDto field,
+      String value) async {
+    print("Scanned: $value");
+    Map<String, dynamic> request = {};
+    scanAndPush(request, "Continue", field.accessor, value);
+
   }
 
   void submit(String action) {
@@ -141,12 +206,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     submit('completeReceiving');
   }
 
-  Future<void> scanCompleted(
-      FieldDto field,
-      String value) async {
-    print("Scanned: $value");
 
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -5,8 +5,9 @@ class ReceivingScreenDto {
   final int screenNo;
   String template;
   int? receivingId;
-
-  ReceivingScreenDto( {required this.mobileScreenDTO, required this.screenNo,required this.template,  this.receivingId });
+  bool? scanSuccess;
+  String? errorMessage;
+  ReceivingScreenDto( {required this.mobileScreenDTO, required this.screenNo,required this.template,  this.receivingId, this.scanSuccess , this.errorMessage });
 
   factory ReceivingScreenDto.fromJson(Map<String, dynamic> json) {
     return  ReceivingScreenDto(
@@ -14,7 +15,11 @@ class ReceivingScreenDto {
             json['mobileScreenDTO']),
         screenNo: json['screenNo'],
       template: json['template'],
-      receivingId: json['receivingId']
+
+      receivingId: json['receivingId'],
+      scanSuccess: json['scanSuccess'],
+      errorMessage: json['errorMessage']
+
     );
   }
 }
