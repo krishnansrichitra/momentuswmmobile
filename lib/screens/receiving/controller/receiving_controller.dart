@@ -63,19 +63,24 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
         jsonDecode(response.body),
       );
       print(result);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ReceivingScreen(
-            screenDto: result.mobileScreenDTO,
-            screenNo: result.screenNo,
-            template: result.template,
-            receivingId: result.receivingId,
-            scanSuccess: result.scanSuccess,
-            errorMessage: result.errorMessage,
+      if (result.scanSuccess == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ReceivingScreen(
+                  screenDto: result.mobileScreenDTO,
+                  screenNo: result.screenNo,
+                  template: result.template,
+                  receivingId: result.receivingId,
+                  scanSuccess: result.scanSuccess,
+                  errorMessage: result.errorMessage,
+                ),
           ),
-        ),
-      );
+        );
+      }else {
+        showError(context, result.errorMessage);
+      }
     }
   }
 
@@ -220,7 +225,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
           key: _formKey,
           child: Column(
             children: [
-              if (widget.errorMessage != null && widget.errorMessage!.isNotEmpty)
+             /* if (widget.errorMessage != null && widget.errorMessage!.isNotEmpty)
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(bottom: 12),
@@ -236,7 +241,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
+                ),*/
               ...(widget.screenDto.fields ?? []).map(
                 (field) => buildField(context,field, controllers,formValues,scanCompleted),
               ),
