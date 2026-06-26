@@ -43,9 +43,21 @@ Future<List<Map<String, String>>> loadOptions(String popu) async {
   throw Exception("Failed to load dropdown options");
 }
 
- scannedItem (field,value,operation) async
-{
 
+void showError(BuildContext context, String? message) {
+  if (message == null || message.trim().isEmpty) {
+    return;
+  }
+
+  ScaffoldMessenger.of(context).clearSnackBars();
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 3),
+    ),
+  );
 }
 
 Widget buildField(

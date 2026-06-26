@@ -103,7 +103,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
       },
       body: jsonEncode(request),
     );
-
+    print(response);
     if (response.statusCode == 200) {
       ReceivingScreenDto result = ReceivingScreenDto.fromJson(
         jsonDecode(response.body),
@@ -124,6 +124,8 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                 ),
           ),
         );
+      }else{
+        showError(context, result.errorMessage);
       }
     }
   }
@@ -218,6 +220,23 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
           key: _formKey,
           child: Column(
             children: [
+              if (widget.errorMessage != null && widget.errorMessage!.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    widget.errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ...(widget.screenDto.fields ?? []).map(
                 (field) => buildField(context,field, controllers,formValues,scanCompleted),
               ),
