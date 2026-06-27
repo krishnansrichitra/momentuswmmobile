@@ -12,7 +12,7 @@ class ReceivingScreen extends StatefulWidget {
   final ScreenDto screenDto;
   final int screenNo;
   final String template;
-  final int? receivingId;
+  final String? receivingId;
   final bool? scanSuccess;
   final String? errorMessage;
 

@@ -4,7 +4,7 @@ class ReceivingScreenDto {
   final ScreenDto mobileScreenDTO;
   final int screenNo;
   String template;
-  int? receivingId;
+  String? receivingId;
   bool? scanSuccess;
   String? errorMessage;
   ReceivingScreenDto( {required this.mobileScreenDTO, required this.screenNo,required this.template,  this.receivingId, this.scanSuccess , this.errorMessage });
