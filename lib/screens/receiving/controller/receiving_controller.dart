@@ -15,6 +15,8 @@ class ReceivingScreen extends StatefulWidget {
   final String? receivingId;
   final bool? scanSuccess;
   final String? errorMessage;
+  final String? infoMessage;
+  final bool? warning;
 
   const ReceivingScreen({
     super.key,
@@ -23,7 +25,10 @@ class ReceivingScreen extends StatefulWidget {
     required this.template,
     required this.receivingId,
     required this.scanSuccess,
-    required this.errorMessage
+    required this.errorMessage,
+    required this.infoMessage,
+    required this.warning
+
   });
 
   @override
@@ -75,6 +80,8 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                   receivingId: result.receivingId,
                   scanSuccess: result.scanSuccess,
                   errorMessage: result.errorMessage,
+                  infoMessage: result.infoMessage,
+                  warning: result.warning,
                 ),
           ),
         );
@@ -126,6 +133,8 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                   receivingId: result.receivingId,
                   scanSuccess: result.scanSuccess,
                   errorMessage: result.errorMessage,
+                  infoMessage: result.infoMessage,
+                  warning: result.warning
                 ),
           ),
         );
@@ -225,23 +234,23 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
           key: _formKey,
           child: Column(
             children: [
-             /* if (widget.errorMessage != null && widget.errorMessage!.isNotEmpty)
+              if (widget.infoMessage != null && widget.infoMessage!.isNotEmpty)
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.red.shade100,
+                    color: Colors.blue.shade100,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    widget.errorMessage!,
+                    widget.infoMessage!,
                     style: const TextStyle(
-                      color: Colors.red,
+                      color: Colors.blue,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),*/
+                ),
               ...(widget.screenDto.fields ?? []).map(
                 (field) => buildField(context,field, controllers,formValues,scanCompleted),
               ),

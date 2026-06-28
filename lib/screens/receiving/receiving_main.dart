@@ -104,7 +104,9 @@ class _ReceivingPageState extends State<ReceivingPage> {
                       template: result.template,
                       receivingId: result.receivingId,
                       scanSuccess: result.scanSuccess,
-                      errorMessage: result.errorMessage
+                      errorMessage: result.errorMessage,
+                        infoMessage: result.infoMessage,
+                      warning: result.warning,
                     ),
                   ),
                 );
