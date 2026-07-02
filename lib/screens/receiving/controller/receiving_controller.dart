@@ -196,9 +196,9 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     submit('scanLPN');
   }
 
-  void scanChildLPN ()
+  void scanCaseLPN ()
   {
-    submit('scanChildLPN');
+    submit('scanCaseLPN');
   }
 
   void scanItem ()
@@ -274,8 +274,8 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                           child: const Text("Scan Item"),
                         ),
                         ElevatedButton(
-                          onPressed: scanChildLPN,
-                          child: const Text("Scan Child LPN"),
+                          onPressed: scanCaseLPN,
+                          child: const Text("Scan Case LPN"),
                         ),
                         ElevatedButton(
                           onPressed: generateLPN,
