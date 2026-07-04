@@ -98,7 +98,10 @@ Widget buildField(
       );
     }
 
-    controllers.putIfAbsent(field.accessor, () => TextEditingController());
+    controllers.putIfAbsent(
+      field.accessor!,
+          () => TextEditingController(text: field.value ?? ''),
+    );
     if (field.scannable == true) {
       return TextFormField(
         controller: controllers[field.accessor],
@@ -138,7 +141,10 @@ Widget buildField(
   }
 
   if (field.type == "data_type_long") {
-    controllers.putIfAbsent(field.accessor, () => TextEditingController());
+    controllers.putIfAbsent(
+      field.accessor!,
+          () => TextEditingController(text: field.value ?? ''),
+    );
 
     return TextFormField(
       controller: controllers[field.accessor],

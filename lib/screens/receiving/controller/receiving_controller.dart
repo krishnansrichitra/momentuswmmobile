@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/receiving_screen_dto.dart';
+import '../../../main.dart';
 
 class ReceivingScreen extends StatefulWidget {
   final ScreenDto screenDto;
@@ -69,22 +70,31 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
       );
       print(result);
       if (result.scanSuccess == true) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                ReceivingScreen(
-                  screenDto: result.mobileScreenDTO,
-                  screenNo: result.screenNo,
-                  template: result.template,
-                  receivingId: result.receivingId,
-                  scanSuccess: result.scanSuccess,
-                  errorMessage: result.errorMessage,
-                  infoMessage: result.infoMessage,
-                  warning: result.warning,
-                ),
-          ),
-        );
+        if (result.screenNo == 100 ) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
+        }else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ReceivingScreen(
+                    screenDto: result.mobileScreenDTO,
+                    screenNo: result.screenNo,
+                    template: result.template,
+                    receivingId: result.receivingId,
+                    scanSuccess: result.scanSuccess,
+                    errorMessage: result.errorMessage,
+                    infoMessage: result.infoMessage,
+                    warning: result.warning,
+                  ),
+            ),
+          );
+        }
       }else {
         showError(context, result.errorMessage);
       }
@@ -191,6 +201,11 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     );
   }
 
+  void scanComplete ()
+  {
+    submit('scanComplete');
+  }
+
   void scanLPN ()
   {
     submit('scanLPN');
@@ -277,10 +292,6 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                           onPressed: scanCaseLPN,
                           child: const Text("Scan Case LPN"),
                         ),
-                        ElevatedButton(
-                          onPressed: generateLPN,
-                          child: const Text("Generate LPN No"),
-                        ),
                       ],
                     )
                   ]else if (widget.screenNo == 3)...[
@@ -297,8 +308,8 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                           child: const Text("Scan Next LPN"),
                         ),
                         ElevatedButton(
-                          onPressed: completeScan,
-                          child: const Text("Generate LPN No"),
+                          onPressed: scanComplete,
+                          child: const Text("Scan Complete"),
                         ),
                       ],
                     )
