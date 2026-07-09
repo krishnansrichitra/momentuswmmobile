@@ -18,6 +18,7 @@ class ReceivingScreen extends StatefulWidget {
   final String? errorMessage;
   final String? infoMessage;
   final bool? warning;
+  final String? buttonCode;
 
   const ReceivingScreen({
     super.key,
@@ -28,7 +29,8 @@ class ReceivingScreen extends StatefulWidget {
     required this.scanSuccess,
     required this.errorMessage,
     required this.infoMessage,
-    required this.warning
+    required this.warning,
+    required this.buttonCode
 
   });
 
@@ -91,6 +93,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
                     errorMessage: result.errorMessage,
                     infoMessage: result.infoMessage,
                     warning: result.warning,
+                    buttonCode: result.buttonCode
                   ),
             ),
           );
@@ -104,52 +107,55 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
   Future<void> scanAndPush(Map<String, dynamic> request,String action,String accessor,String barcode) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("jwt");
-    request['receivingId'] = widget.receivingId;
-    final uri =
-    Uri.parse(
-      "${AppConfig.apiBaseUrl}/wms/api/rcvcontroller/scanBarcode",
-    ).replace(
-      queryParameters: {
-        "template": widget.template,
-        "screenNo": widget.screenNo.toString(),
-        "action": action,
-        "accessor":accessor,
-        "barcode" :barcode
-      },
-    );
-    final response = await http.post(
-      uri,
-      headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json",
-      },
-      body: jsonEncode(request),
-    );
-    print(response);
-    if (response.statusCode == 200) {
-      ReceivingScreenDto result = ReceivingScreenDto.fromJson(
-        jsonDecode(response.body),
+    if (widget.screenDto.fields?.length == 1) {
+      request['receivingId'] = widget.receivingId;
+      final uri =
+      Uri.parse(
+        "${AppConfig.apiBaseUrl}/wms/api/rcvcontroller/scanBarcode",
+      ).replace(
+        queryParameters: {
+          "template": widget.template,
+          "screenNo": widget.screenNo.toString(),
+          "action": action,
+          "accessor": accessor,
+          "barcode": barcode
+        },
       );
-      print(result);
-      if (result.scanSuccess == true) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                ReceivingScreen(
-                  screenDto: result.mobileScreenDTO,
-                  screenNo: result.screenNo,
-                  template: result.template,
-                  receivingId: result.receivingId,
-                  scanSuccess: result.scanSuccess,
-                  errorMessage: result.errorMessage,
-                  infoMessage: result.infoMessage,
-                  warning: result.warning
-                ),
-          ),
+      final response = await http.post(
+        uri,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(request),
+      );
+      print(response);
+      if (response.statusCode == 200) {
+        ReceivingScreenDto result = ReceivingScreenDto.fromJson(
+          jsonDecode(response.body),
         );
-      }else{
-        showError(context, result.errorMessage);
+        print(result);
+        if (result.scanSuccess == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ReceivingScreen(
+                    screenDto: result.mobileScreenDTO,
+                    screenNo: result.screenNo,
+                    template: result.template,
+                    receivingId: result.receivingId,
+                    scanSuccess: result.scanSuccess,
+                    errorMessage: result.errorMessage,
+                    infoMessage: result.infoMessage,
+                    warning: result.warning,
+                    buttonCode: result.buttonCode,
+                  ),
+            ),
+          );
+        } else {
+          showError(context, result.errorMessage);
+        }
       }
     }
   }
@@ -175,7 +181,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
       String value) async {
     print("Scanned: $value");
     Map<String, dynamic> request = {};
-    scanAndPush(request, "Continue", field.accessor, value);
+    scanAndPush(request, "defaultAction", field.accessor, value);
 
   }
 
@@ -201,42 +207,168 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
     );
   }
 
+
+  void startReceiving ()
+  {
+    submit('START_REC');
+  }
+
+  void receiviePallet ()
+  {
+    submit('REC_PALLET');
+  }
+
+  void receivieCases ()
+  {
+    submit('REC_CASE');
+  }
+
+  void receiveItems ()
+  {
+    submit('REC_ITEM');
+  }
+
+  void verifyCases ()
+  {
+    submit('VERIFY_CASES');
+  }
+
+  void verifyItems ()
+  {
+    submit('VERIFY_ITEMS');
+  }
+
+
+  void scanPallet ()
+  {
+    submit('SCAN_PALLET');
+  }
+
+  void scanCase ()
+  {
+    submit('SCAN_CASE');
+  }
+
+
   void scanComplete ()
   {
-    submit('scanComplete');
+    submit('SCAN_COMPLETE');
   }
 
-  void scanLPN ()
+  void capturePic ()
   {
-    submit('scanLPN');
-  }
-
-  void scanCaseLPN ()
-  {
-    submit('scanCaseLPN');
-  }
-
-  void scanItem ()
-  {
-    submit('scanItem');
-  }
-
-  void generateLPN()
-  {
-
-    submit('generateLPNNo');
-  }
-
-  void completeScan()
-  {
-    submit('completeScan');
+    submit('CAPTURE_PIC');
   }
 
   void completeReceiving()
   {
-    submit('completeReceiving');
+    submit('COMPLETE_REC');
   }
 
+  void defaultSubmit()
+  {
+    submit('DefaultAction');
+
+  }
+
+  List<Widget> buildButtons() {
+    List<Widget> buttons = [];
+
+    if (widget.buttonCode?.contains("A") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: startReceiving,
+          child: const Text("Start Receiving"),
+        ),
+      );
+    }
+
+    if (widget.buttonCode?.contains("B") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: receiviePallet,
+          child: const Text("Receive Pallet"),
+        ),
+      );
+    }
+    if (widget.buttonCode?.contains("C") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: receivieCases,
+          child: const Text("Receive Cases"),
+        ),
+      );
+    }
+    if (widget.buttonCode?.contains("D") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: receiveItems,
+          child: const Text("Receive Items"),
+        ),
+      );
+    }
+
+    if (widget.buttonCode?.contains("E") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: verifyCases,
+          child: const Text("Verify Cases"),
+        ),
+      );
+    }
+
+    if (widget.buttonCode?.contains("F") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: verifyItems,
+          child: const Text("Verify Items"),
+        ),
+      );
+    }
+    if (widget.buttonCode?.contains("G") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: scanPallet,
+          child: const Text("Scan Pallet"),
+        ),
+      );
+    }
+
+    if (widget.buttonCode?.contains("H") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: scanCase,
+          child: const Text("Scan Case"),
+        ),
+      );
+    }
+
+    if (widget.buttonCode?.contains("I") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: scanComplete,
+          child: const Text("Scan Complete"),
+        ),
+      );
+    }
+    if (widget.buttonCode?.contains("J") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: capturePic,
+          child: const Text("Capture Pic"),
+        ),
+      );
+    }
+    if (widget.buttonCode?.contains("K") ?? false) {
+      buttons.add(
+        ElevatedButton(
+          onPressed: completeReceiving,
+          child: const Text("Complete Receiving"),
+        ),
+      );
+    }
+    return buttons;
+  }
 
 
   @override
@@ -273,52 +405,10 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  if (widget.screenNo == 1)...[
-                    ElevatedButton(
-                      onPressed: scanLPN,
-                      child: const Text("Scan LPN"),
-                    ),
-                  const SizedBox(width: 20),
-                 ]else if (widget.screenNo == 2)...[
-                    Wrap(
-                      spacing: 20,
-                      runSpacing: 20,
-                      children: [
-                        ElevatedButton(
-                          onPressed: scanItem,
-                          child: const Text("Scan Item"),
-                        ),
-                        ElevatedButton(
-                          onPressed: scanCaseLPN,
-                          child: const Text("Scan Case LPN"),
-                        ),
-                      ],
-                    )
-                  ]else if (widget.screenNo == 3)...[
-                    Wrap(
-                      spacing: 20,
-                      runSpacing: 20,
-                      children: [
-                        ElevatedButton(
-                          onPressed: scanItem,
-                          child: const Text("Scan  Next Item"),
-                        ),
-                        ElevatedButton(
-                          onPressed: scanLPN,
-                          child: const Text("Scan Next LPN"),
-                        ),
-                        ElevatedButton(
-                          onPressed: scanComplete,
-                          child: const Text("Scan Complete"),
-                        ),
-                      ],
-                    )
-                  ]else
-                    ElevatedButton(
-                      onPressed: completeReceiving,
-                      child: const Text("Proceed"),
-                    ),
-
+                  if (widget.screenNo == 1)...buildButtons()
+                  else if (widget.screenNo == 2)... buildButtons()
+                  else if (widget.screenNo == 3)... buildButtons()
+                  else ...buildButtons()
                 ],
               ),
             ],

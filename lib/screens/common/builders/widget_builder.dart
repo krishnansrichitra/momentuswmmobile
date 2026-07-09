@@ -112,7 +112,7 @@ Widget buildField(
           labelText: field.label,
           suffixIcon: IconButton(
             icon: const Icon(Icons.qr_code_scanner),
-            onPressed: () async {
+              onPressed: () async {
               final scannedValue = await openScanner(context);
               if (scannedValue != null) {
                 controllers[field.accessor]!.text = scannedValue;

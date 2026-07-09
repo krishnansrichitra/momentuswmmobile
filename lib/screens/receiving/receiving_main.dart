@@ -107,6 +107,7 @@ class _ReceivingPageState extends State<ReceivingPage> {
                       errorMessage: result.errorMessage,
                         infoMessage: result.infoMessage,
                       warning: result.warning,
+                      buttonCode: result.buttonCode
                     ),
                   ),
                 );
