@@ -181,7 +181,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
       String value) async {
     print("Scanned: $value");
     Map<String, dynamic> request = {};
-    scanAndPush(request, "defaultAction", field.accessor, value);
+    scanAndPush(request, "DEF_ACTION", field.accessor, value);
 
   }
 
@@ -374,7 +374,7 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Receiving")),
+      appBar: AppBar(title:  Text(widget.template)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
