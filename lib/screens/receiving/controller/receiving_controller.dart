@@ -252,7 +252,13 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
 
   void scanComplete ()
   {
-    submit('SCAN_COMPLETE');
+    Map<String, dynamic> request = {};
+    for (var field in widget.screenDto.fields ?? []) {
+      request[field.accessor] =
+          controllers[field.accessor]?.text ??
+              formValues[field.accessor];
+    }
+    loadNextScreen(request,'SCAN_COMPLETE');
   }
 
   void capturePic ()
