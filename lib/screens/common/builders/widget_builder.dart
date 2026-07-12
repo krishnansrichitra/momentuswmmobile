@@ -130,10 +130,10 @@ Widget buildField(
               : field.label,
         ),
         validator: (value) {
-          if ((field.mandatory ?? false) &&
+         /* if ((field.mandatory ?? false) &&
               (value == null || value.trim().isEmpty)) {
             return "${field.label} is required";
-          }
+          }*/
           return null;
         },
       );
@@ -153,10 +153,10 @@ Widget buildField(
         labelText: field.mandatory ?? false ? "${field.label} *" : field.label,
       ),
       validator: (value) {
-        if ((field.mandatory ?? false) &&
+       /* if ((field.mandatory ?? false) &&
             (value == null || value.trim().isEmpty)) {
           return "${field.label} is required";
-        }
+        }*/
         return null;
       },
     );
@@ -192,9 +192,9 @@ Widget buildField(
       validator: (_) {
         final text = controllers[field.accessor]?.text ?? "";
 
-        if ((field.mandatory ?? false) && text.trim().isEmpty) {
+        /*if ((field.mandatory ?? false) && text.trim().isEmpty) {
           return "${field.label} is required";
-        }
+        }*/
 
         return null;
       },
