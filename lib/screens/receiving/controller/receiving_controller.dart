@@ -185,9 +185,9 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
 
   }
 
-  void submit(String action) {
+  void submit(String action, validMandatory) {
     Map<String, dynamic> request = {};
-    if (!_formKey.currentState!.validate()) {
+    if (validMandatory == true && !_formKey.currentState!.validate()) {
       return;
     }
 
@@ -210,70 +210,65 @@ class _ReceivingScreenState extends State<ReceivingScreen> {
 
   void startReceiving ()
   {
-    submit('START_REC');
+    submit('START_REC',true);
   }
 
   void receiviePallet ()
   {
-    submit('REC_PALLET');
+    submit('REC_PALLET',true);
   }
 
   void receivieCases ()
   {
-    submit('REC_CASE');
+    submit('REC_CASE',true);
   }
 
   void receiveItems ()
   {
-    submit('REC_ITEM');
+    submit('REC_ITEM',true);
   }
 
   void verifyCases ()
   {
-    submit('VERIFY_CASES');
+    submit('VERIFY_CASES',true);
   }
 
   void verifyItems ()
   {
-    submit('VERIFY_ITEMS');
+    submit('VERIFY_ITEMS',true);
   }
 
 
   void scanPallet ()
   {
-    submit('SCAN_PALLET');
+    submit('SCAN_PALLET',false);
   }
 
   void scanCase ()
   {
-    submit('SCAN_CASE');
+    submit('SCAN_CASE',false);
   }
 
 
   void scanComplete ()
   {
-    Map<String, dynamic> request = {};
-    for (var field in widget.screenDto.fields ?? []) {
-      request[field.accessor] =
-          controllers[field.accessor]?.text ??
-              formValues[field.accessor];
-    }
-    loadNextScreen(request,'SCAN_COMPLETE');
+
+    submit('SCAN_COMPLETE',false);
   }
 
   void capturePic ()
   {
-    submit('CAPTURE_PIC');
+    submit('CAPTURE_PIC',false);
   }
 
   void completeReceiving()
   {
-    submit('COMPLETE_REC');
+    submit('COMPLETE_REC',true);
   }
 
   void defaultSubmit()
   {
-    submit('DefaultAction');
+    submit('DefaultAction',true);
 
   }
 
